@@ -37,8 +37,6 @@ public class DishController {
     @Autowired
     private RedisTemplate<Object, Object> redisTemplate;
 
-
-
     @PostMapping
     public R<String> save(@RequestBody DishDto dishDto) {
         dishService.saveWithFlavor(dishDto);
