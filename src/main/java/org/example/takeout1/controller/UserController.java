@@ -8,6 +8,7 @@ import org.example.takeout1.entity.User;
 import org.example.takeout1.service.UserService;
 import org.example.takeout1.utils.ValidateCodeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

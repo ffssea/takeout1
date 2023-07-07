@@ -1,6 +1,8 @@
 server:
   port: 10808
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: takeout1
   redis:

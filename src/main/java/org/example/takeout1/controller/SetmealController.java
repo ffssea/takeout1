@@ -12,9 +12,12 @@ import org.example.takeout1.service.SetmealDishService;
 import org.example.takeout1.service.SetmealService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +33,9 @@ public class SetmealController {
     @Autowired
     private CategoryService categoryService;
 
+
     @PostMapping
+    @CacheEvict(value="setmealCache", allEntries = true)
     public R<String> save(@RequestBody SetmealDto setmealDto) {
         log.info("新增套餐信息: {}", setmealDto.toString());
         setmealService.saveWithDish(setmealDto);
@@ -64,6 +69,7 @@ public class SetmealController {
     }
 
     @PostMapping("/status/{status}")
+    @CacheEvict(value="setmealCache", allEntries = true)
     public R<String> status(@PathVariable int status, @RequestParam List<Long> ids) {
         List<Setmeal> setmealList = ids.stream().map(item -> {
             Setmeal setmeal = new Setmeal();
@@ -76,12 +82,14 @@ public class SetmealController {
     }
 
     @DeleteMapping
+    @CacheEvict(value="setmealCache", allEntries = true)
     public R<String> delete(@RequestParam List<Long> ids) {
         setmealService.removeWithDish(ids);
         return R.success("删除成功");
     }
 
     @GetMapping("/list")
+    @Cacheable(value = "setmealCache", key = "#setmeal.categoryId + '_' + #setmeal.status")
     public R<List<Setmeal>> list(Setmeal setmeal) {
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(setmeal.getCategoryId() != null, Setmeal::getCategoryId, setmeal.getCategoryId());
